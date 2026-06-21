@@ -1,0 +1,23 @@
+# 모델 가중치
+models/*.pt
+models/*.onnx
+*.pt
+*.onnx
+
+# 데이터셋 전체
+data/
+
+# 학습 출력
+outputs/
+runs/
+
+# 피드백 이미지
+feedback/images/
+
+# 파이썬
+__pycache__/
+*.pyc
+.env
+
+# 기타
+*.tgz
