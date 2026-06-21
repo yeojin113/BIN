@@ -15,3 +15,4 @@ timestamp,image_file,predicted,correct,predicted_conf,backend
 20260622_011653_070497,20260622_011653_070497_vinyl_to_paper.jpg,vinyl,paper,0.9421,PyTorch
 20260622_014119_603711,20260622_014119_603711_can_to_pet_bottle.jpg,can,pet_bottle,0.9374,PyTorch
 20260622_020501_507176,20260622_020501_507176_can_to_paper.jpg,can,paper,0.5861,PyTorch
+20260622_031537_575880,20260622_031537_575880_paper_to_unknown.jpg,paper,unknown,0.9602,PyTorch
