@@ -34,3 +34,5 @@ PyYAML==6.0.3
 requests==2.34.2
 tqdm==4.68.2torch
 torchvision
+torch
+torchvision
