@@ -71,21 +71,17 @@ DET_COLORS = {
 }
 _PALETTE = ["#6366f1", "#ec4899", "#14b8a6", "#f97316", "#06b6d4"]
 
-
 def _color_hex(label: str, class_id: int = 0) -> str:
     return DET_COLORS.get(label, _PALETTE[class_id % len(_PALETTE)])
-
 
 def _hex_to_bgr(h: str):
     h = h.lstrip("#")
     r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
     return (b, g, r)
 
-
 def _hex_to_rgb(h: str):
     h = h.lstrip("#")
     return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 한글 폰트 로더
@@ -96,7 +92,6 @@ _FONT_CANDIDATES = [
     "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
     "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
 ]
-
 
 @st.cache_resource(show_spinner=False)
 def _load_font(size: int = 22):
@@ -111,7 +106,6 @@ def _load_font(size: int = 22):
             except Exception:
                 continue
     return ImageFont.load_default()
-
 
 # ── 전역 CSS ──────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -157,7 +151,6 @@ div[data-testid="stMetricValue"] { font-family:'Space Grotesk', sans-serif; font
 </style>
 """, unsafe_allow_html=True)
 
-
 # ══════════════════════════════════════════════════════════════════════════════
 # 세션 상태 초기화
 # ══════════════════════════════════════════════════════════════════════════════
@@ -178,12 +171,10 @@ def _init_state():
 
 _init_state()
 
-
 def track_latency(ms: float):
     st.session_state.infer_ms.append(ms)
     if len(st.session_state.infer_ms) > 60:
         st.session_state.infer_ms = st.session_state.infer_ms[-60:]
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 피드백 저장 (human-in-the-loop)
@@ -194,7 +185,6 @@ FEEDBACK_IMG_DIR = FEEDBACK_DIR / "images"
 FEEDBACK_LOG     = FEEDBACK_DIR / "feedback_log.csv"
 _FEEDBACK_FIELDS = ["timestamp", "image_file", "predicted", "correct",
                     "predicted_conf", "backend"]
-
 
 def save_feedback(bgr_image, predicted_label, predicted_conf, correct_label, backend):
     FEEDBACK_IMG_DIR.mkdir(parents=True, exist_ok=True)
@@ -220,7 +210,6 @@ def save_feedback(bgr_image, predicted_label, predicted_conf, correct_label, bac
         return None, f"로그 저장 실패: {e}"
     return img_path, None
 
-
 def load_feedback_log():
     if not FEEDBACK_LOG.exists():
         return []
@@ -229,7 +218,6 @@ def load_feedback_log():
             return list(csv.DictReader(f))
     except Exception:
         return []
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 탐지기 로더 (캐시 — 싱글톤)
@@ -242,7 +230,6 @@ def load_detector(conf_thr: float, iou_thr: float):
     if _USE_PT and config.MODEL_PT.exists():
         return _PyTorchDetector(config.MODEL_PT, conf_thr, iou_thr), "PyTorch"
     return _DemoDetector(conf_thr), "Demo"
-
 
 class _PyTorchDetector:
     def __init__(self, pt_path, conf, iou):
@@ -268,7 +255,6 @@ class _PyTorchDetector:
         detections.sort(key=lambda d: d["confidence"], reverse=True)
         return detections, ms
 
-
 class _DemoDetector:
     def __init__(self, conf):
         self.conf = conf
@@ -287,7 +273,6 @@ class _DemoDetector:
             "confidence": conf,
             "bbox": [float(x1), float(y1), float(x1+bw), float(y1+bh)],
         }], 12.0
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 박스 드로잉
@@ -330,7 +315,6 @@ def draw_boxes(bgr: np.ndarray, detections: list, show_conf: bool = True) -> np.
         draw.rectangle([x1, ly, x1 + tw + 2 * pad, ly + th + 2 * pad], fill=fill)
         draw.text((x1 + pad, ly + pad - t_), txt, font=font, fill=(255, 255, 255))
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 클래스별 상세 정보 (분리배출/효과/마크/예외품목) — 출처: 환경부·서울시
@@ -417,7 +401,6 @@ RECYCLE_PROCESS = {
     },
 }
 
-
 # ══════════════════════════════════════════════════════════════════════════════
 # 결과 렌더링
 # ══════════════════════════════════════════════════════════════════════════════
@@ -427,7 +410,6 @@ def update_stats(detections: list):
         st.session_state.total    += 1
         st.session_state.conf_sum += det["confidence"]
         st.session_state.counts[det["label"]] += 1
-
 
 def render_result_panel(detections, fps, result_ph, guide_ph, dev, show_guide):
     """탐지 결과 카드. 개발자 모드면 신뢰도·클래스명까지 표시."""
@@ -500,7 +482,6 @@ def render_result_panel(detections, fps, result_ph, guide_ph, dev, show_guide):
     else:
         guide_ph.empty()
 
-
 def render_marks_for_detections(detections):
     """탐지된 클래스의 분리배출 마크 이미지를 결과 아래에 표시."""
     if not detections:
@@ -524,7 +505,6 @@ def render_marks_for_detections(detections):
             with cols[idx % len(cols)]:
                 st.image(str(MARK_DIR / mf), use_container_width=True)
                 st.caption(MARK_DESC.get(mf, ""))
-
 
 def render_recycle_process(detections):
     """탐지된 클래스의 재활용 과정을 카드로 바로 표시. (출처: 분리의 정석)"""
@@ -574,7 +554,6 @@ def render_recycle_process(detections):
             unsafe_allow_html=True,
         )
 
-
 def render_feedback_widget(backend):
     if "last_detections" not in st.session_state:
         return
@@ -603,9 +582,10 @@ def render_feedback_widget(backend):
 
         # ── 2) 그 항목의 올바른 분류 선택 ─────────────────────────────────
         st.caption(f"선택한 항목의 현재 예측: **{pred_ko}**")
-        options_ko = [config.CLASS_NAMES_KO.get(c, c) for c in config.CLASS_NAMES]
+        options_ko = [config.CLASS_NAMES_KO.get(c, c) for c in config.CLASS_NAMES] + ["❓ 모르겠어요"]
         choice_ko = st.radio("올바른 분류는?", options_ko, horizontal=True, key="fb_choice")
         ko_to_label = {config.CLASS_NAMES_KO.get(c, c): c for c in config.CLASS_NAMES}
+        ko_to_label["❓ 모르겠어요"] = "unknown"
         correct_label = ko_to_label.get(choice_ko, choice_ko)
 
         # ── 3) 저장 ───────────────────────────────────────────────────────
@@ -623,14 +603,12 @@ def render_feedback_widget(backend):
                 else:
                     st.success("피드백이 기록되었습니다. 모델 개선에 활용됩니다. 감사합니다!")
 
-
 # ══════════════════════════════════════════════════════════════════════════════
 # 헤더
 # ══════════════════════════════════════════════════════════════════════════════
 
 st.markdown('<div class="bin-logo">B<span>:</span>in</div>', unsafe_allow_html=True)
 st.caption("실시간 AI 분리수거 도우미 · YOLOv8 기반 폐기물 탐지 시스템")
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 사이드바
@@ -725,7 +703,6 @@ with st.sidebar:
         else:
             st.info("아직 수집된 피드백이 없습니다.")
 
-
 # ── 시스템 상태 pill ──────────────────────────────────────────────────────────
 try:
     model_name = config.MODEL_ONNX.name if (_USE_ONNX and config.MODEL_ONNX.exists()) \
@@ -743,7 +720,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 st.divider()
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 실시간 카메라용 VideoProcessor
@@ -775,7 +751,6 @@ if _USE_WEBRTC:
                     self.last_detections = []
             img = draw_boxes(img, self.last_detections, self.show_conf)
             return av.VideoFrame.from_ndarray(img, format="bgr24")
-
 
 def run_single_image(bgr, frame_ph, result_ph, guide_ph):
     with st.spinner("🔍 분석 중..."):
