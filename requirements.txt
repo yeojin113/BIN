@@ -1,38 +1,20 @@
 # B:in 프로젝트 의존성
-# ─────────────────────────────────────────────────────────────────────────────
-# PyTorch는 CUDA 버전에 따라 설치 URL이 다르므로 별도 설치:
-#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
-#
-# 나머지 패키지:
-#   pip install -r requirements.txt
-# ─────────────────────────────────────────────────────────────────────────────
+# PyTorch 별도 설치: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 
-# 핵심 프레임워크
 ultralytics==8.4.67
 streamlit==1.58.0
-
-# 이미지 처리
 opencv-python==4.13.0.92
 Pillow==12.2.0
 numpy==2.2.6
-
-# 실시간 카메라 (미설치 시 실시간 카메라 모드만 비활성화, 나머지 기능 정상 작동)
 streamlit-webrtc==0.72.2
 av==16.1.0
-
-# ONNX 추론 (GPU 환경: onnxruntime-gpu 로 교체)
 onnxruntime==1.23.2
-
-# 데이터 증강 (학습 시 필요, 웹 앱 실행만이면 불필요)
 albumentations==2.0.8
-
-# 기타
 pandas==2.3.3
 matplotlib==3.10.9
 scikit-learn==1.7.2
 PyYAML==6.0.3
 requests==2.34.2
-tqdm==4.68.2torch
-torchvision
+tqdm==4.68.2
 torch
 torchvision
